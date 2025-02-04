@@ -1,0 +1,26 @@
+.form-select {
+    display: block;
+    padding-left: 5px;
+    width: 48px;
+    height: 28px;
+    /* color: #182433;; */
+    font-size: 16px;
+    font-weight: bold;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    /* background: url("../assets/images/icon_select.svg") no-repeat; */
+    background-color: pink;
+    background-position: right center;
+    background-size: 16px 12px;
+    border: 1px solid #dadfe5;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(var(24, 36, 51), 0.06);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  /* 获得焦点时的外观 */
+  .form-select:focus {
+    border-color: #80aad3;
+    outline: 0;
+    box-shadow: 0 1px 1px rgba(var(24, 36, 51), 0.06), 0 0 0 0.25rem rgba(0, 84, 166, 0.25);
+  }

@@ -1,0 +1,16 @@
+/* // 字体修改 */
+@font-face
+{
+    font-family: 'SourceHanSansCN-Heavy';
+    src: url('../assets/font/SourceHanSansCN-Heavy.otf');
+    font-weight: normal;  
+    font-style: normal;  
+}
+@font-face
+{
+    font-family: 'SourceHanSansCN-Medium';
+    src: url('../assets/font/SourceHanSansSC-Medium-2.otf');
+    font-weight: normal;  
+    font-style: normal;  
+}
+

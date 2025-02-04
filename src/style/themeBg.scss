@@ -1,0 +1,38 @@
+// .themeBg {
+//   content: "";
+//   width: 100%;
+//   height: 100%;
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+//   --color-filter: hue-rotate(25.4219deg);
+//   background-size: cover;
+//   background-image: linear-gradient(rgba(255, 255, 255, 0.2),
+//       rgba(255, 255, 255, 0.2)),
+//     url("@/assets/carbon/背景.png");
+//     background-color:pink;
+//   z-index: -1;
+// }
+
+
+
+// /* 媒体查询：横屏模式时 */
+// @media screen and (orientation: landscape) {
+//     .box{
+//       // background-size: cover; /* 横屏时使用cover模式，确保图像覆盖屏幕 */
+//       // background-size: contain; /* 背景图自适应 */
+//       background-size: 100% 100%;
+//       background-repeat: no-repeat;
+  
+//       // background-position: center; /* 背景图居中 */
+//     }
+//   }
+  
+//   /* 媒体查询：竖屏模式时 */
+//   @media screen and (orientation: portrait) {
+//     .box {
+//       // background-size: cover; /* 竖屏时也使用cover模式，确保图像覆盖屏幕 */
+//       background-size: contain; /* 背景图自适应 */
+//       background-repeat: no-repeat;
+//     }
+//   }
