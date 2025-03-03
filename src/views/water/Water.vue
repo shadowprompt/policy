@@ -3,14 +3,14 @@
     <!-- 头部 -->
     <div class="water-header">
       <div class="title1">农业水价综合改革政策监测与评估系统</div>
-    <div class="title1">System for Monitoring and Evaluation of Policies of Comprehensive Reform of Agricultural Water Prices</div>
+    <div class="title1">System for Policies of Comprehensive Reform of Agricultural Water Prices</div>
     <div class="title2">water.policies.cn</div>
     <div class="title3" @click="showIntro = true"><div>系统简介</div></div>
     
     </div>
     <div class="water-second">
       <div class="left-title">
-        <span class="title">政策详情</span>
+        <span class="title">政策情景</span>
       </div>
       <!-- 左边 -->
       <div class="left">
@@ -28,20 +28,25 @@
             <span class="title-a">政策补贴</span>
           </div>
         <!-- c -->
-        <div class="list-c c-1">
+        <!-- c-1或者c-2是用来调整距离上一部分的距离的，因为会发生margin合并 -->
+        <div class="slider-box">
+          <noUiSlider @slider="handleSlider1"/>
+        </div>
+        <!-- <div class="list-c c-1">
           <div class="c-content">补贴比例</div>
           <div class="line">
           <noUiSlider  @slider="handleSlider1"/>
 
           </div>
         </div>
+
         <div class="list-c">
           <div class="c-content">补贴范围</div>
           <div class="line">
           <noUiSlider  @slider="handleSlider2"/>
 
           </div>
-        </div>
+        </div> -->
         <div class="list-c c-2" >
           <div class="c-content">补贴对象</div>
           <!-- <div class="line"></div> -->
@@ -57,7 +62,7 @@
             <span class="title-a">用水管理</span>
           </div>
           <!-- d -->
-        <div class="list-d">
+        <div class="list-d c-1">
           <div class="d-content">水价梯度</div>
           <div class="d-btn">
             <el-select placeholder="0" v-model="waterGrad">
@@ -108,12 +113,15 @@
       </div>
       <!-- 中间 -->
       <div class="mid">
-        <div class="large">
+        <div 
+        class="large"
+        :class="[imageList.length <=0?'large':'none-large']">
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
+          style="object-fit: cover"
           @click="previewImage(imageList[0])"
-          >
-
-          
+          @load="onImageLoad"
+          :class="[scrollClass]"
+          > 
         </div>
         <div class="nav">
         <midNav/>
@@ -163,7 +171,7 @@
     </div>
 
         <!-- 图片放大显示 -->
-        <div class="overlay" v-if="showPreview" @click="showPreview=false">
+        <div class="overlay overlay-image" v-if="showPreview" @click="showPreview=false">
       <div class="ImagePreview" >
           <img :src="previewSrc" alt="放大详情">
       </div>
@@ -235,14 +243,14 @@ const { policySubsidyRadio, subsidyScope, subsidyObject, waterGrad, waterPriceSt
 
 const loading=ref(false);
 
-  const handleSlider1 = (value) => {
-  policySubsidyRadio.value = value/100.0; // 更新父组件中的滑块值
+  const handleSlider1 = (twoRadio) => {
+  policySubsidyRadio.value = twoRadio.Avalue/100.0; // 更新父组件中的滑块值
   console.log(policySubsidyRadio.value,'huqsic');
-};
-const handleSlider2 = (value) => {
+  console.log(twoRadio);
+  subsidyScope.value = twoRadio.Bvalue/100.0; // 更新父组件中的滑块值
 
-  subsidyScope.value = value/100.0; // 更新父组件中的滑块值
 };
+
 
 watch(policySubsidyRadio,(a,b)=>{
   console.log(a,b);
@@ -330,9 +338,55 @@ const checkParams= async ()=>{
   
   
 }
+
+//图片滚动条
+const scrollClass = computed(() => {
+  if (isHorizontalScroll.value) {
+    return 'horizontal-scroll';
+  } else if (isVerticalScroll.value) {
+    return 'vertical-scroll';
+  } else {
+    return 'none-scroll';
+  }
+});
+const isHorizontalScroll = ref(false); // 是否显示横向滚动条
+const isVerticalScroll = ref(false); // 是否显示横向滚动条
+// 图片加载完成时的事件
+const onImageLoad = (event) => {
+  const img = event.target;
+  const aspectRatio = img.naturalWidth / img.naturalHeight; // 计算宽高比
+
+  // 当宽高比大于1.5时，显示横向滚动条；宽高比等于或小于1.5时，显示竖直滚动条
+  if (aspectRatio > 1.65) {
+    isHorizontalScroll.value = true;
+    isVerticalScroll.value = false; // 宽高比大于1.5，显示横向滚动条
+  } else if(aspectRatio <1.35){
+    isVerticalScroll.value = true;
+    isHorizontalScroll.value = false; // 宽高比小于或等于1.5，显示竖直滚动条
+  }
+console.log('图片加载完成，宽度：', img.naturalWidth, '高度：', img.naturalHeight);
+
+};
   </script>
   
   <style lang="scss" scoped>
+  .none-large{
+    background: none !important;
+  }
+.horizontal-scroll {
+  max-height: 100%;
+  background-color: #fff;
+
+}
+
+.vertical-scroll {
+  // overflow-x: hidden; /* 隐藏横向滚动条 */
+  max-width: 100%;
+}
+.none-scroll{
+  width: 1080px;
+      height: 720px;
+}
 
 .list-g{
     width: 100%;
@@ -393,7 +447,7 @@ font-family: SourceHanSansCN-Medium;
   }
 .left-title{
   position: absolute;
-  left: 25px;
+  left: 20px;
 top: 96px;
 width: 375px;
 height: 50px;
@@ -405,11 +459,11 @@ background-size: 100% 100%;
 position:absolute;
 top: 10px;
 left: 50px;
-width: 80px;
-height: 20px;
+// width: 80px;
+// height: 20px;
 color: rgba(255, 255, 255, 1);
 font-size: 20px;
-text-align: left;
+// text-align: left;
 text-shadow: 2px 4px 0px rgba(39, 85, 149, 0.6);
 font-family: SourceHanSansCN-Heavy;
 }
@@ -426,19 +480,22 @@ font-family: SourceHanSansCN-Heavy;
     background-size: 100% 100%;
     width: 300px;
     height: 30px;
-    // margin-bottom: 20px;
-    // &:nth-child(1){
-    // margin-bottom: none;
+    display: flex;
+    flex-wrap: nowrap;
+  // justify-content: center; /* 水平靠左 */
+  // align-items: center; /* 竖直居中 */
 
-    // }
     .title-a{
-      position:absolute;
-      left: 70px;
-      width: 72px;
-      height: 17px;
+      position:relative;
+      // left: 70px;
+      top:50%;
+  left: 6%;
+  transform: translateY(-50%); 
+      // width: 72px;
+      // height: 17px;
       color: rgba(255, 255, 255, 1);
       font-size: 17px;
-      text-align: center;
+      // text-align: center;
       font-family: SourceHanSansCN-Heavy;
     }
   }
@@ -533,7 +590,7 @@ font-family: SourceHanSansCN-Medium;
 
     .d-content{
       height: 40px;
-      width: 64px;
+      width: 68px;
       margin-right: 26px;
 
 color: rgba(79, 99, 158, 1);
@@ -696,31 +753,30 @@ box-sizing: border-box;
   // display: flex;
   // gap: 20px;
   .large{
-  width: 950px;
-      height: 800px;
+  width: 1080px;
+      height: 720px;
+      margin-top: 40px;
       position: relative;
       background-color: #fff;
-  background: url(../../assets/water/背景数据图片.png) no-repeat;
+  background: url(../../assets/water/地图.png) no-repeat;
     background-size: cover;
-    img{
-        width: 960px;
-        height: 800px;
-        
-      }
-      // margin: 10px 20px 0px 230px;
+  overflow: auto; 
+
 }
 .nav{
   height: 90px;
     width: 780px;
-    margin-left: 135px;
+    margin-left: 198px;
+    margin-top: 40px;
 }
 }
 .right{
-  padding: 20px 20px 40px 30px;
+  padding: 0px 0px 0px 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  align-items: center;
   img{
     width: 300px;
     height: 200px;
@@ -729,7 +785,7 @@ box-sizing: border-box;
 }
 .right-title{
   position: absolute;
-  right: 20px;
+  right: -16px;
 top: 96px;
 width: 375px;
 height: 50px;
@@ -744,12 +800,13 @@ background-size: 100% 100%;
 
 .box{
   width: 100%;
-  height: 1080px;
-  background-image: url("@/assets/carbon/背景.png");
+  // width: 1920px;
+  height: 1070px;
+  background-image: url("@/assets/carbon/背景.jpg");
   background-size: contain;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-// background-color: black;
+background-color: black;
 
 }
 // 头部
@@ -791,8 +848,8 @@ font-family: SourceHanSansCN-Heavy;
     position: absolute;
 right: 40px;
 top: 40px;
-width: 72px;
-height: 18px;
+// width: 72px;
+// height: 18px;
 color: rgba(56, 115, 206, 1);
 font-size: 18px;
 text-align: left;
@@ -808,25 +865,27 @@ font-family: SourceHanSansCN-Heavy;
   // background-color: #fff;
   overflow: hidden;
   .left{
-    width: 360px;
-    height: 900px;
+    width: 340px;
+    // height: 900px;
     background-image: url("@/assets/carbon/数据框背景.png");
   background-size: 100% 100%;
-    margin:36px 0px 4px 30px;
+    margin:36px 0px 4px 18px;
   }
   .mid{
     display: inline-block;
-width: 960px;
+// width: 960px;
 height: 884px;
-margin: 56px 45px 0px 45px;
+margin: 56px 0px 0px 1px;
 // background-color: pink;
   }
   .right{
-    width: 360px;
+    width: 340px;
     height: 900px;
     background-image: url("@/assets/carbon/数据框背景.png");
   background-size: 100% 100%;
-    margin:36px 30px 4px 0px;
+    margin:36px 19px 4px 0px;
+    position: absolute;
+    right: 0;
   }
 
 }
@@ -893,16 +952,25 @@ margin-bottom: 30px;
   align-items: center;
   z-index: 1;
 }
+// .overlay-image{
+//   background-color:rgb(255,255,255);
+//   background:rgba(68, 76, 99, 0.8); /* 黑色半透明 */
+
+// }
 // 放大图片
 .ImagePreview{
   display: flex;
   justify-content: center;
   align-items: center;
+
   img{
     // margin-left: 10%;
     max-width: 60%;
   max-height: 80%;
   object-fit: contain;
+  background-color:rgb(255,255,255);
+
+  
   }
 
 }

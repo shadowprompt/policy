@@ -27,36 +27,35 @@
     </div>
     <!-- 底部文字 -->
     <div class="home-bottom">
-      <div class="footer">华中农业大学数组农业研究院 研制</div>
-      <div class="footer">www.police.cn</div>
+      <div class="footer">华中农业大学数字农业研究院 研制</div>
+      <div class="footer">www.policies.cn</div>
       <p></p>
     </div>
   </div>
 </div>
-  <!-- <div class="themeBg" ref="themeBgRef"></div> -->
+  
 
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
 
-// const themeBgRef = ref(null);
-// const themeBgSize = ref(null);
-
-// onMounted(() => {
-//   if (themeBgRef.value) {
-//     const rect = themeBgRef.value.getBoundingClientRect();
-//     themeBgSize.value = {
-//       width: rect.width,
-//       height: rect.height
-//     };
-//     console.log('themeBg 宽度:', rect.width, 'px, 高度:', rect.height, 'px');
-//   }
-// });
 
 </script>
 
 <style lang="scss" scoped>
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1080px;
+  background:rgba(68, 76, 99, 0.5); /* 黑色半透明 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
 //
 .mid-image{
   display: flex;
@@ -128,6 +127,7 @@ height: 40px;
 ///
 .box{
   // width: 1920px;
+  // height: 1080px;
   width: 100%;
   background-image: url("@/assets/home/背景.png");
   background-size: contain;

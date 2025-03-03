@@ -35,6 +35,7 @@ export default defineConfig({
   },
   devServer: {
     proxy: 'http://8.148.20.105:9090'
+    // proxy: 'http://172.20.10.3:5173'
   },
   resolve: {
     alias: {

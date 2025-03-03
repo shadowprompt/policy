@@ -3,13 +3,13 @@
     <!-- 头部 -->
     <div class="carbon-header">
       <div class="title1">农业减排固碳政策监测与评估系统</div>
-    <div class="title1">System for Monitoring and Evaluation of Policies of Emission Reduction and Carbon Sequestration in Agriculture</div>
+    <div class="title1">System for Policies of Emission Reduction and Carbon Sequestration in Agriculture</div>
     <div class="title2">carbon.policies.cn</div>
     <div class="title3" @click="showIntro = true" ><div>系统简介</div></div>
     </div>
     <div class="carbon-second">
       <div class="left-title">
-        <span class="title">政策详情</span>
+        <span class="title">政策情景</span>
       </div>
       <!-- 左边 -->
       <div class="left">
@@ -109,10 +109,15 @@
       </div>
       <!-- 中间 -->
       <div class="mid">
-        <div class="large">
+        <div 
+        class="large"
+        :class="[imageList.length <=0?'large':'none-large']">
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
+          style="object-fit: cover"
           @click="previewImage(imageList[0])"
-          >
+          @load="onImageLoad"
+          :class="[scrollClass]"
+          > 
         </div>
         <div class="nav"> <midNav/> </div>
         
@@ -183,10 +188,30 @@
   
 
   <style lang="scss" scoped>
+  .none-scroll{
+  width: 1080px;
+      height: 720px;
+}
+      .none-large{
+    background: none !important;
+  }
+  //在传递的图片不符合比例的时候，加滚动条
+
+  .horizontal-scroll {
+  max-height: 100%;
+  background-color: #fff;
+
+}
+
+.vertical-scroll {
+  // overflow-x: hidden; /* 隐藏横向滚动条 */
+  max-width: 100%;
+}
 .nav{
   height: 90px;
     width: 780px;
-    margin-left: 135px;
+    margin-left: 198px;
+    margin-top: 40px;
 }
 
 
@@ -279,13 +304,14 @@ margin-bottom: 30px;
     max-width: 60%;
   max-height: 70%;
   object-fit: contain;
+  background-color: #fff;
   }
 
 }
 
 .left-title{
   position: absolute;
-  left: 25px;
+  left: 10px;
 top: 85px;
 width: 375px;
 height: 50px;
@@ -297,8 +323,8 @@ background-size: 100% 100%;
 position:absolute;
 top: 10px;
 left: 50px;
-width: 80px;
-height: 20px;
+// width: 80px;
+// height: 20px;
 color: rgba(255, 255, 255, 1);
 font-size: 20px;
 text-align: left;
@@ -316,11 +342,22 @@ font-family: SourceHanSansCN-Heavy;
     background-size: 100% 100%;
     width: 300px;
     height: 30px;
+    display: flex;
+    flex-wrap: nowrap;
+    // align-items: center;
+    // transform-: ;
+
+
     .title-a{
-      position:absolute;
-      left: 70px;
-      width: 72px;
-      height: 17px;
+      // position:absolute;
+      // left: 70px;
+      position: relative;
+      top:50%;
+  left: 6%;
+  transform: translateY(-50%); 
+  // top:0;
+      // width: 72px;
+      // height: 17px;
       color: rgba(255, 255, 255, 1);
       font-size: 17px;
       text-align: center;
@@ -385,6 +422,8 @@ font-family: SourceHanSansCN-Medium;
 
 .right{
   padding: 20px 20px 40px 30px;
+  // padding: 0px 0px 0px 10px;
+
   box-sizing: border-box;
   img{
     width: 300px;
@@ -410,11 +449,13 @@ background-size: 100% 100%;
 
 .box{
   width: 100%;
-  height: 1080px;
+  // width: 1920px;
+  height: 1070px;
   background-image: url("@/assets/water/背景.png");
   background-size: 100% 100%;
+  // background-size: contain;
   background-repeat: no-repeat;
-// background-color: black;
+background-color: black;
 
 }
 // 头部
@@ -456,8 +497,7 @@ font-family: SourceHanSansCN-Heavy;
     position: absolute;
 right: 40px;
 top: 40px;
-width: 72px;
-height: 18px;
+
 color: rgba(56, 115, 206, 1);
 font-size: 18px;
 text-align: left;
@@ -473,25 +513,31 @@ font-family: SourceHanSansCN-Heavy;
   // background-color: #fff;
   overflow: hidden;
   .left{
-    width: 360px;
+    width: 340px;
     height: 900px;
     background-image: url("@/assets/carbon/数据框背景.png");
   background-size: 100% 100%;
-    margin:36px 0px 4px 30px;
+    // margin:36px 0px 4px 30px;
+    margin:36px 0px 4px 18px;
+
   }
   .mid{
     display: inline-block;
-width: 960px;
+// width: 960px;
 height: 884px;
-margin: 56px 45px 0px 45px;
+// margin: 56px 45px 0px 45px;
+margin: 56px 0px 0px 1px;
+
 // background-color:rgba(39, 85, 149, 0.6);
   }
   .right{
-    width: 360px;
+    width: 340px;
     height: 900px;
     background-image: url("@/assets/carbon/数据框背景.png");
   background-size: 100% 100%;
-    margin:36px 30px 4px 0px;
+  margin:36px 19px 4px 0px;
+
+    // margin:36px 30px 4px 0px;
   }
 
 }
@@ -499,17 +545,16 @@ margin: 56px 45px 0px 45px;
 ////
 /// 
 .large{
-  width: 950px;
-      height: 800px;
+  width: 1080px;
+      height: 720px;
       position: relative;
       background-color: #fff;
-  background: url(https://policy-support.oss-cn-wuhan-lr.aliyuncs.com/data/%E5%9F%BA%E5%87%86%E5%9B%BE-carbon.png) no-repeat;
+  background: url("@/assets/carbon/地图.png") no-repeat;
   background-size: 100% 100%;
-  img{
-        width: 960px;
-        height: 800px;
-        
-      }
+  margin-top: 40px;
+  overflow: auto;
+
+
       // margin: 10px 20px 0px 230px;
 }
 ///  
@@ -776,6 +821,34 @@ const previewImage=(src)=>{
       loading.value=false;
 
     }
+
+};
+//图片滚动条
+const scrollClass = computed(() => {
+  if (isHorizontalScroll.value) {
+    return 'horizontal-scroll';
+  } else if (isVerticalScroll.value) {
+    return 'vertical-scroll';
+  } else {
+    return 'none-scroll';
+  }
+});
+const isHorizontalScroll = ref(false); // 是否显示横向滚动条
+const isVerticalScroll = ref(false); // 是否显示横向滚动条
+// 图片加载完成时的事件
+const onImageLoad = (event) => {
+  const img = event.target;
+  const aspectRatio = img.naturalWidth / img.naturalHeight; // 计算宽高比
+
+  // 当宽高比大于1.5时，显示横向滚动条；宽高比等于或小于1.5时，显示竖直滚动条
+  if (aspectRatio > 1.65) {
+    isHorizontalScroll.value = true;
+    isVerticalScroll.value = false; // 宽高比大于1.5，显示横向滚动条
+  } else if(aspectRatio <1.35){
+    isVerticalScroll.value = true;
+    isHorizontalScroll.value = false; // 宽高比小于或等于1.5，显示竖直滚动条
+  }
+console.log('图片加载完成，宽度：', img.naturalWidth, '高度：', img.naturalHeight);
 
 };
     </script>

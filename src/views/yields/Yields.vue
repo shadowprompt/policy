@@ -31,14 +31,18 @@
       </div>
       <!-- 右边 -->
       <div class="right">
-        <div class="large"> 
-          <div class="image-loading" v-if="loading"></div>
-
+        <div 
+        class="large"
+        :class="[imageList.length <=0?'large':'none-large']">
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
+          style="object-fit: cover"
           @click="previewImage(imageList[0])"
-          ></div>
+          @load="onImageLoad"
+          :class="[scrollClass]"
+          > 
+        </div>
         <div class="right-bot">
-          <div class="mid-nav">
+          <div class="nav">
             <midNav/>
           </div>
 
@@ -86,11 +90,11 @@
       <div class="varList" @click.stop>
         <div class="box1">
           <div class="box1-a">
-            <span>政策区域</span></div>
+            <span class="title-a">政策区域</span></div>
           <div class="box1-a">
-            <span>作物选择</span></div>
+            <span class="title-a">作物选择</span></div>
           <div class="box1-a">
-            <span>时间选择</span></div>
+            <span class="title-a">时间选择</span></div>
         </div>
         <!--  -->
         <div class="box2">
@@ -137,7 +141,7 @@
   // import { ElMessage } from 'element-plus';
   // import { ElSelect, ElOption } from 'element-plus';
   import {getDatasetsByPredictionId} from '@/api/getImages';
-import {reactive, ref,toRef,onMounted} from 'vue'
+import {reactive, ref,toRef,onMounted,computed} from 'vue'
 //解析图像
 import {resetImageSrc} from "@/utils/ImageSrc";
 import { ElMessage } from 'element-plus';
@@ -199,7 +203,7 @@ const checkParams= async () => {
 
       ElMessage.success('操作成功！')
       loading.value=false;
-
+      showList.value=false;
       } else {
         console.error("后端返回的图片列表为空");
       loading.value=false;
@@ -220,11 +224,56 @@ const checkParams= async () => {
     console.log("cropType 不等于 1，无需发送请求");
   }
 };
+//图片滚动条
+const scrollClass = computed(() => {
+  if (isHorizontalScroll.value) {
+    return 'horizontal-scroll';
+  } else if (isVerticalScroll.value) {
+    return 'vertical-scroll';
+  } else {
+    return 'none-scroll';
+  }
+});
+const isHorizontalScroll = ref(false); // 是否显示横向滚动条
+const isVerticalScroll = ref(false); // 是否显示横向滚动条
+// 图片加载完成时的事件
+const onImageLoad = (event) => {
+  const img = event.target;
+  const aspectRatio = img.naturalWidth / img.naturalHeight; // 计算宽高比
+
+  if (aspectRatio > 1.835) {
+    isHorizontalScroll.value = true;
+    isVerticalScroll.value = false; 
+  } else if(aspectRatio <1.515){
+    isVerticalScroll.value = true;
+    isHorizontalScroll.value = false; 
+  }
+console.log('图片加载完成，宽度：', img.naturalWidth, '高度：', img.naturalHeight);
+console.log(isHorizontalScroll.value,"横向",isVerticalScroll.value,"竖直",aspectRatio);
+};
 
   </script>
   
   <style lang="scss" scoped>
+  .none-scroll{
+  width: 1080px;
+      height: 720px;
+}
+  .none-large{
+    background: none !important;
+  }
+ //在传递的图片不符合比例的时候，加滚动条
 
+ .horizontal-scroll {
+  max-height: 100%;
+  background-color: #fff;
+
+}
+
+.vertical-scroll {
+  // overflow-x: hidden; /* 隐藏横向滚动条 */
+  max-width: 100%;
+}
 .left-btn{
   width: 354px;
   height: 80px;
@@ -260,7 +309,7 @@ box-sizing: border-box;
 line-height: 50px;
 padding-left: 45px;
 color: rgba(255, 255, 255, 1);
-font-size: 22px;
+font-size: 22px; 
 text-align: left;
 font-family: SourceHanSansCN-Heavy;
 }
@@ -278,7 +327,7 @@ min-width: 300px !important;
   //   width: 32px!important;
   // }
   // .el-select.el-input {
-  //   width: 120px!important;
+  //   width : 120px!important;
   // }
   .el-message {
 min-width: 300px !important;
@@ -324,17 +373,31 @@ min-width: 300px !important;
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-  .box1-a{
-    width: 315px;
-    height: 35px;
+    .box1-a{
+//     left: 55px;
+// top: 160px;
     background-image: url("@/assets/water/二级标题.png");
     background-size: 100% 100%;
-    position: relative;
-    span{
-position: absolute;
-left: 20px;
-width: 72px;
-height: 18px;
+    width: 315px;
+    height: 35px;
+    display: flex;
+      flex-wrap: nowrap;
+
+    .title-a{
+      // position:absolute;
+      // left: 70px;
+      position: relative;
+      top:50%;
+  left: 6%;
+  transform: translateY(-50%); 
+  // top:0;
+      // width: 72px;
+      // height: 17px;
+      color: rgba(255, 255, 255, 1);
+      font-size: 17px;
+      text-align: center;
+      font-family: SourceHanSansCN-Heavy;
+      // height: 18px;
 color: rgba(255, 255, 255, 1);
 font-size: 18px;
 font-family: SourceHanSansCN-Heavy;
@@ -482,11 +545,11 @@ background-size: 100% 100%;
 position:absolute;
 top: 4px;
 left: 40px;
-width: 80px;
-height: 20px;
+// width: 80px;
+// height: 20px;
 color: rgba(255, 255, 255, 1);
 font-size: 20px;
-text-align: left;
+// text-align: left;
 text-shadow: 2px 4px 0px rgba(39, 85, 149, 0.6);
 font-family: SourceHanSansCN-Heavy;
 }
@@ -566,8 +629,8 @@ font-family: SourceHanSansCN-Heavy;
     position: absolute;
 right: 40px;
 top: 40px;
-width: 72px;
-height: 18px;
+// width: 72px;
+// height: 18px;
 color: rgba(56, 115, 206, 1);
 font-size: 18px;
 text-align: left;
@@ -578,7 +641,7 @@ font-family: SourceHanSansCN-Heavy;
 // 第二部分
 .carbon-second{
   display: flex;
-  height: 936px;
+  // height: 936px;
   width: 100%;
   // background-color: #fff;
   overflow: hidden;
@@ -587,8 +650,10 @@ font-family: SourceHanSansCN-Heavy;
     height: 900px;
     // background-image: url("@/assets/carbon/数据框背景.png");
   background-size: 100% 100%;
-    margin:0px 0px 4px 30px;
+    // margin:0px 0px 4px 30px;
     // padding: 20px 30px 40px 20px;
+    margin:36px 0px 4px 18px;
+
   box-sizing: border-box;
   overflow: hidden;
     .list{
@@ -610,23 +675,25 @@ font-family: SourceHanSansCN-Heavy;
   }
   .right{
     width: 1410px;
-    height: 900px;
+    height: 941px;
     // background-color: pink;
     .large{
-      width: 950px;
-      height: 800px;
+      width: 1350px;
+      height: 810px;
       position: relative;
       // background-color: #fff;
-      margin: 52px 240px 0px 230px;
-  background: url(../../assets/yields/背景数据图片png.png) no-repeat;
+      margin: 50px 0px 0px 30px;
+      // margin-top: 80px;
+  background: url(../../assets/yields/地图.png) no-repeat;
 
       background-size: 100% 100%;
+      overflow: auto;
 
-      img{
-        width: 960px;
-        height: 800px;
+      // img{
+      //   width: 960px;
+      //   height: 800px;
         
-      }
+      // }
     }
     .right-bot{
       width: 1410px;
@@ -635,9 +702,11 @@ font-family: SourceHanSansCN-Heavy;
       box-sizing: border-box;
       padding-left: 180px;
     }
-  .mid-nav{
+  .nav{
     height: 90px;
     width: 780px;
+    // margin-left: 198px;
+    // margin-top: 10px;
     // background-color: blanchedalmond;
   }
   }
@@ -713,6 +782,8 @@ font-family: SourceHanSansCN-Heavy;
     max-width: 80%;
   max-height: 80%;
   object-fit: contain;
+  background-color: #fff;
+
   }
 
 }
@@ -731,26 +802,5 @@ font-family: SourceHanSansCN-Heavy;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-// .image-loading2{
-//   position: absolute;
-//   top: 270px;
-//   left: 130px;
-//   // right: px;
-//   display: inline-block;
-//   margin-left: 8px;
-//   width: 70px;
-//   height: 70px;
-//   border: 10px solid rgba(0, 84, 166, 0.5);
-//   border-top-color: rgba(0, 84, 166, 1);
-//   border-radius: 50%;
-//   animation: spin 1s linear infinite;
 
-// }
-// @keyframes spin {
-//   0% {
-//     transform: rotate(0deg);
-//   }
-//   100% {
-//     transform: rotate(720deg);
-//   }}
   </style>

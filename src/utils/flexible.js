@@ -1,31 +1,24 @@
 // flexible.js
-/*
- * @Descripttion: 响应式适配
- * @Author: wangtt
- * @Date: 2024-10-28 09:55:34
- * @LastEditors: wangtt
- * @LastEditTime: 2024-12-02 09:54:47
- */
 (function flexible (window, document) {
-  var docEl = document.documentElement
-  var dpr = window.devicePixelRatio || 1
+  var docEl = document.documentElement//获取根元素
+  var dpr = window.devicePixelRatio || 1//获取像素比，devicePixelRatio 表示物理像素与 CSS 像素的比例，通常用于高分辨率屏幕（如 Retina 屏幕）。
 
   // 调整 body 的字体大小： 根据设备的 devicePixelRatio 设置 body 的字体大小
   function setBodyFontSize () {
-    if (document.body) {
+    if (document.body) {//Dom加载完成
       document.body.style.fontSize = 12 * dpr + 'px'
     } else {
-      document.addEventListener('DOMContentLoaded', setBodyFontSize)
+      document.addEventListener('DOMContentLoaded', setBodyFontSize)//DOMContentLoaded浏览器事件
     }
   }
   setBodyFontSize()
 
-  // set 1rem = viewWidth / 24  此时我们把屏幕平均划分为24等份
+  // 把屏幕平均划分为24等份
   function setRemUnit () {
-    // var rem = docEl.clientWidth / 24
     var rem = docEl.clientWidth / 24
 
     docEl.style.fontSize = rem + 'px'
+    // console.log(max,min);
   }
 
   setRemUnit()
@@ -39,16 +32,4 @@
     }
   })
 
-  // 检测设备是否支持 0.5 像素的边框
-  if (dpr >= 2) {
-    var fakeBody = document.createElement('body')
-    var testElement = document.createElement('div')
-    testElement.style.border = '.5px solid transparent'
-    fakeBody.appendChild(testElement)
-    docEl.appendChild(fakeBody)
-    if (testElement.offsetHeight === 1) {
-      docEl.classList.add('hairlines')
-    }
-    docEl.removeChild(fakeBody)
-  }
 })(window, document)

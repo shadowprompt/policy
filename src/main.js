@@ -1,5 +1,4 @@
 import '../src/style/reset.css'
-import '../src/style/font.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -13,6 +12,8 @@ import '@/utils/flexible.js'
 import 'element-plus/dist/index.css'
 import ElementPlus from 'element-plus'
 import '@/utils/Messages.js'
+
+import 'babel-polyfill'
 
 const app = createApp(App)
 

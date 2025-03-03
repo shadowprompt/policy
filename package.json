@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "serve": "vite serve --host 172.20.10.3",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -14,10 +15,12 @@
     "@element-plus/icons-vue": "^2.3.1",
     "amfe-flexible": "^2.2.1",
     "axios": "^1.7.9",
+    "babel-polyfill": "^6.26.0",
     "element-plus": "^2.9.3",
     "nouislider": "^15.8.1",
     "pinia": "^2.3.1",
     "postcss-pxtorem": "^6.1.0",
+    "run": "^1.5.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
