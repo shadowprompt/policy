@@ -32,21 +32,7 @@
         <div class="slider-box">
           <noUiSlider @slider="handleSlider1"/>
         </div>
-        <!-- <div class="list-c c-1">
-          <div class="c-content">补贴比例</div>
-          <div class="line">
-          <noUiSlider  @slider="handleSlider1"/>
 
-          </div>
-        </div>
-
-        <div class="list-c">
-          <div class="c-content">补贴范围</div>
-          <div class="line">
-          <noUiSlider  @slider="handleSlider2"/>
-
-          </div>
-        </div> -->
         <div class="list-c c-2" >
           <div class="c-content">补贴对象</div>
           <!-- <div class="line"></div> -->
@@ -100,8 +86,8 @@
           </div>
         <!-- e -->
         <div class="list-e">
-          <div class="e-btn" @click="runYear='1'" :class="{'list-active':runYear==='1'}">一年进行</div>
-          <div class="e-btn" @click="runYear='2'" :class="{'list-active':runYear==='2'}">多年进行</div>
+          <div class="e-btn" @click="runYear='1'" :class="{'list-active':runYear==='1'}">一年运行</div>
+          <div class="e-btn" @click="runYear='2'" :class="{'list-active':runYear==='2'}">多年运行</div>
         </div>
         
         </div>
@@ -117,7 +103,7 @@
         class="large"
         :class="[imageList.length <=0?'large':'none-large']">
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
-          style="object-fit: cover"
+          style="object-fit: contain"
           @click="previewImage(imageList[0])"
           @load="onImageLoad"
           :class="[scrollClass]"
@@ -245,8 +231,8 @@ const loading=ref(false);
 
   const handleSlider1 = (twoRadio) => {
   policySubsidyRadio.value = twoRadio.Avalue/100.0; // 更新父组件中的滑块值
-  console.log(policySubsidyRadio.value,'huqsic');
-  console.log(twoRadio);
+  // console.log(policySubsidyRadio.value,'huqsic');
+  // console.log(twoRadio);
   subsidyScope.value = twoRadio.Bvalue/100.0; // 更新父组件中的滑块值
 
 };
@@ -306,6 +292,12 @@ const checkParams= async ()=>{
     ElMessage.warning("补贴比例为100%时，必须选择补贴对象");
     throw new Error("无此数据组");
   }
+  if(subsidyScope.value == 1&&subsidyObject.value !=0){
+    ElMessage.warning("补贴范围为1时,补贴对象不用选择");
+  throw new Error("无此数据组");
+  }
+
+
   loading.value=true;
 
   try{

@@ -11,7 +11,7 @@ import '@/utils/flexible.js'
 
 import 'element-plus/dist/index.css'
 import ElementPlus from 'element-plus'
-import '@/utils/Messages.js'
+// import '@/utils/Messages.js'
 
 import 'babel-polyfill'
 

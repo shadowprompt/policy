@@ -110,10 +110,10 @@
       <!-- 中间 -->
       <div class="mid">
         <div 
-        class="large"
-        :class="[imageList.length <=0?'large':'none-large']">
+        class="large" :class="[imageList.length <=0?'large':'none-large']">
+
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
-          style="object-fit: cover"
+          style="object-fit: contain"
           @click="previewImage(imageList[0])"
           @load="onImageLoad"
           :class="[scrollClass]"
@@ -191,6 +191,10 @@
   .none-scroll{
   width: 1080px;
       height: 720px;
+      img{
+        object-fit: contain;
+
+      }
 }
       .none-large{
     background: none !important;
@@ -716,12 +720,12 @@ import { ElMessage } from 'element-plus';
     label: '2',
   },
   {
-    value: '4',
-    label: '4',
+    value: '3',
+    label: '3',
   },
   {
-    value: '6',
-    label: '6',
+    value: '4',
+    label: '4',
   },
 
 ]
@@ -823,6 +827,8 @@ const previewImage=(src)=>{
     }
 
 };
+const isHorizontalScroll = ref(false); // 是否显示横向滚动条
+const isVerticalScroll = ref(false); // 是否显示横向滚动条
 //图片滚动条
 const scrollClass = computed(() => {
   if (isHorizontalScroll.value) {
@@ -832,21 +838,20 @@ const scrollClass = computed(() => {
   } else {
     return 'none-scroll';
   }
+  // console.log("图片更新了",isHorizontalScroll.value,"heng",isVerticalScroll.value);
 });
-const isHorizontalScroll = ref(false); // 是否显示横向滚动条
-const isVerticalScroll = ref(false); // 是否显示横向滚动条
+
 // 图片加载完成时的事件
 const onImageLoad = (event) => {
   const img = event.target;
   const aspectRatio = img.naturalWidth / img.naturalHeight; // 计算宽高比
 
-  // 当宽高比大于1.5时，显示横向滚动条；宽高比等于或小于1.5时，显示竖直滚动条
   if (aspectRatio > 1.65) {
     isHorizontalScroll.value = true;
-    isVerticalScroll.value = false; // 宽高比大于1.5，显示横向滚动条
+    isVerticalScroll.value = false; // 宽高比大于1.65，显示横向滚动条
   } else if(aspectRatio <1.35){
     isVerticalScroll.value = true;
-    isHorizontalScroll.value = false; // 宽高比小于或等于1.5，显示竖直滚动条
+    isHorizontalScroll.value = false; // 宽高比小于或等于1.35，显示竖直滚动条
   }
 console.log('图片加载完成，宽度：', img.naturalWidth, '高度：', img.naturalHeight);
 

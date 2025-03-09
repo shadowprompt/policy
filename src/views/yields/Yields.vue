@@ -35,7 +35,7 @@
         class="large"
         :class="[imageList.length <=0?'large':'none-large']">
           <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
-          style="object-fit: cover"
+          style="object-fit: contain"
           @click="previewImage(imageList[0])"
           @load="onImageLoad"
           :class="[scrollClass]"

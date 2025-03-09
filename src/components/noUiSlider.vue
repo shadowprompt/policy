@@ -83,7 +83,7 @@ const data=reactive({
     value.addEventListener('click', () => {
       const valueToSet = parseFloat(value.getAttribute('data-value'));
       Aslider.value.noUiSlider.set(valueToSet); // 更新滑块的值
-      console.log(Avalue.value,"Avalue.value变了");
+      // console.log(Avalue.value,"Avalue.value变了");
       // emits('slider', data); // 触发 slider 事件
     });
   });
@@ -91,7 +91,7 @@ const data=reactive({
   BpipValues.forEach(value => {
     value.addEventListener('click', () => {
       const valueToSet = parseFloat(value.getAttribute('data-value'));
-      console.log(Avalue.value,"Bvalue.value变了");
+      // console.log(Avalue.value,"Bvalue.value变了");
 
       Bslider.value.noUiSlider.set(valueToSet); // 更新滑块的值
       
@@ -163,7 +163,7 @@ watch(data,()=>{
   
     data.Avalue=Avalue.value;
   data.Bvalue=Bvalue.value;
-  console.log(data);
+  // console.log(data);
   emits('slider', data); // 触发 slider 事件
 },{deep:true});
 </script>
