@@ -6,7 +6,7 @@
     <div class="title1">System for Policies of Comprehensive Reform of Agricultural Water Prices</div>
     <div class="title2">water.policies.cn</div>
     <div class="title3" @click="showIntro = true"><div>系统简介</div></div>
-    
+
     </div>
     <div class="water-second">
       <div class="left-title">
@@ -39,7 +39,7 @@
         </div>
         <!-- g -->
         <div class="list-g" v-for="(item,index) in Options" :key="index" @click="chooseObject(item.key)">
-          <div class="circle-button" 
+          <div class="circle-button"
           :class="{'circle-button-active': subsidyObject === item.key }">
               </div>{{ item.name }}
         </div>
@@ -52,14 +52,14 @@
           <div class="d-content">水价梯度</div>
           <div class="d-btn">
             <el-select placeholder="0" v-model="waterGrad">
-                <el-option 
+                <el-option
                 v-for="item in options"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
                 /></el-select>
           </div>
-          
+
         </div>
         <div class="list-d">
           <div class="d-content">水价标准</div>
@@ -89,37 +89,38 @@
           <div class="e-btn" @click="runYear='1'" :class="{'list-active':runYear==='1'}">一年运行</div>
           <div class="e-btn" @click="runYear='2'" :class="{'list-active':runYear==='2'}">多年运行</div>
         </div>
-        
+
         </div>
-        
+
         <div class="btn">
           <div class="btn-content" @click="checkParams">运行</div>
           <div class="loading" v-if="loading"></div>
         </div>
       </div>
       <!-- 中间 -->
-      <div class="mid">
-        <div 
-        class="large"
-        :class="[imageList.length <=0?'large':'none-large']">
-          <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
-          style="object-fit: contain"
-          @click="previewImage(imageList[0])"
-          @load="onImageLoad"
-          :class="[scrollClass]"
-          > 
-        </div>
-        <div class="nav">
-        <midNav/>
-        </div>
-        <!-- <img src="" alt=""> -->
-      </div>
-      <div class="right">
-        <img v-for="(image,index) in imageList.slice(1)"
-          :key="index"
-          :src="image" 
-          @click="previewImage(image)">
-      </div>
+      <chart></chart>
+<!--      <div class="mid">-->
+<!--        <div-->
+<!--        class="large"-->
+<!--        :class="[imageList.length <=0?'large':'none-large']">-->
+<!--          <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"-->
+<!--          style="object-fit: contain"-->
+<!--          @click="previewImage(imageList[0])"-->
+<!--          @load="onImageLoad"-->
+<!--          :class="[scrollClass]"-->
+<!--          >-->
+<!--        </div>-->
+<!--        <div class="nav">-->
+<!--        <midNav/>-->
+<!--        </div>-->
+<!--        &lt;!&ndash; <img src="" alt=""> &ndash;&gt;-->
+<!--      </div>-->
+<!--      <div class="right">-->
+<!--        <img v-for="(image,index) in imageList.slice(1)"-->
+<!--          :key="index"-->
+<!--          :src="image"-->
+<!--          @click="previewImage(image)">-->
+<!--      </div>-->
       <div class="right-title">
         <span class="title">统计分析</span>
       </div>
@@ -136,17 +137,17 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;系统中文名称为农业水价综合改革政策监测与评估系统，英文名称为 System for Monitoring and Evaluation of Policies of Comprehensive Reform of Agricultural Water Prices。
           本系统由华中农业大学数字农业研究院农业数字经济团队于2024年6月开发。
         </p>
-        
+
         <p class="title-small">二、主要功能</p>
         <p class="detail">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;农业水价综合改革政策事前评估 农业水价综合改革政策效果监测、预测与预警
         </p>
-        
+
         <p class="title-small">三、适用范围</p>
         <p class="detail">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本系统可以为县、市、省乃至全国层面的用水管理（征收水费、水资源税）、节水奖励、节水措施补贴等农业水价综合改革政策提供监测、评估、预测和预警信息。
         </p>
-        
+
         <p class="title-small">四、主要构成</p>
         <p class="detail">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本系统的核心模型是农户个体决策模型，采用模块化农户决策模拟器模块化决策模拟器（Modular Decision-making Simulator, 简称MoDemS），详见 https://gitee.com/socialsimulation/MoDemS
@@ -164,16 +165,17 @@
     </div>
 
   </div>
-  
+
     <!-- <div class="themeBg">tan</div> -->
-  
+
   </template>
-  
+
   <script setup>
   import {reactive, ref,toRefs,watch,computed} from 'vue'
   import { ElMessage } from 'element-plus';
   import {getDatasetsByPredictionId} from '@/api/getImages';
   import {resetImageSrc} from "@/utils/ImageSrc";
+  import Chart from '@/views/water/Chart.vue'
 
 
 const showIntro =ref(false);
@@ -269,7 +271,7 @@ const finalParams = computed(() => {
     }
   };
 });
- 
+
 const checkParams= async ()=>{
   console.log(finalParams.value);
   if (policySubsidyRadio.value == 0 && subsidyScope.value != 0) {
@@ -302,10 +304,10 @@ const checkParams= async ()=>{
 
   try{
     const response = await getDatasetsByPredictionId(finalParams.value);
-    
-    
+
+
     console.log("请求成功:", response);
-    
+
     // 处理 Base64 图片
     const base64Images = response?.data?.base64Images || [];
     if (base64Images.length > 0) {
@@ -327,8 +329,8 @@ const checkParams= async ()=>{
     loading.value=false;
 
   }
-  
-  
+
+
 }
 
 //图片滚动条
@@ -360,7 +362,7 @@ console.log('图片加载完成，宽度：', img.naturalWidth, '高度：', img
 
 };
   </script>
-  
+
   <style lang="scss" scoped>
   .none-large{
     background: none !important;
@@ -459,7 +461,7 @@ font-size: 20px;
 text-shadow: 2px 4px 0px rgba(39, 85, 149, 0.6);
 font-family: SourceHanSansCN-Heavy;
 }
- 
+
 .left{
   position: relative;
   padding: 20px 30px 40px 20px;
@@ -482,7 +484,7 @@ font-family: SourceHanSansCN-Heavy;
       // left: 70px;
       top:50%;
   left: 6%;
-  transform: translateY(-50%); 
+  transform: translateY(-50%);
       // width: 72px;
       // height: 17px;
       color: rgba(255, 255, 255, 1);
@@ -526,7 +528,7 @@ font-size: 18px;
       height: 40px;
       // width: px;
       // margin-right: 26px;
-      
+
 
 color: rgba(79, 99, 158, 1);
 font-size: 16px;
@@ -612,8 +614,8 @@ border-radius: 5px;
       // background-color: hotpink;
       background-color: rgba(230, 244, 255, 1);
 border-radius: 5px;
-// max-width: 70px; 
-// min-width: 30px;  
+// max-width: 70px;
+// min-width: 30px;
 // margin-right: 10px;
 border: 1.5px solid rgba(9, 97, 255, 1);
 
@@ -640,8 +642,8 @@ border-radius: 10px;
 //       // background-color: hotpink;
 //       background-color: rgba(230, 244, 255, 1);
 // border-radius: 5px;
-// max-width: 70px; 
-// // min-width: 30px;  
+// max-width: 70px;
+// // min-width: 30px;
 // // margin-right: 10px;
 // // height: 34px;
 // input{
@@ -716,7 +718,7 @@ box-sizing: border-box;
     text-align: center;
     }
     .loading{
-      /* 加载提示框 */ 
+      /* 加载提示框 */
   position: absolute;
   top: 15px;
   right: -5px;
@@ -741,40 +743,7 @@ box-sizing: border-box;
     }
 }
 
-.mid{
-  // display: flex;
-  // gap: 20px;
-  .large{
-  width: 1080px;
-      height: 720px;
-      margin-top: 40px;
-      position: relative;
-      background-color: #fff;
-  background: url(../../assets/water/地图.png) no-repeat;
-    background-size: cover;
-  overflow: auto; 
 
-}
-.nav{
-  height: 90px;
-    width: 780px;
-    margin-left: 198px;
-    margin-top: 40px;
-}
-}
-.right{
-  padding: 0px 0px 0px 10px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  img{
-    width: 300px;
-    height: 200px;
-    // margin-bottom: 20px;
-  }
-}
 .right-title{
   position: absolute;
   right: -16px;
@@ -809,7 +778,7 @@ background-color: black;
 
 
   .title1{
-    text-align: center;  
+    text-align: center;
 width: 100%;
 height: 38px;
 color: rgba(255, 255, 255, 1);
@@ -962,7 +931,7 @@ margin-bottom: 30px;
   object-fit: contain;
   background-color:rgb(255,255,255);
 
-  
+
   }
 
 }
