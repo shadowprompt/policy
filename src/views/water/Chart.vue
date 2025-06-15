@@ -3,7 +3,12 @@ import { onMounted, ref } from 'vue';
 import * as echarts from 'echarts';
 import waterJson from '../../assets/waterJson.json';
 import waterData from '../../assets/waterData.json';
+import { fetchData } from '@/utils/dataRequest.js'
 
+const props = defineProps(['dataList', 'xxx'])
+console.log('props ~ ', props)
+
+const OFFSET = 50;
 const INITIAL = -1
 let count = INITIAL;
 
@@ -35,6 +40,9 @@ const {dataList} = getDataList(0)
 const total =  dataList.length;
 
 let instance = ref(null);
+let instanceRight1 = ref(null);
+let instanceRight2 = ref(null);
+let instanceRight3 = ref(null);
 
 let scale = ref(1);
 
@@ -80,7 +88,9 @@ function init() {
   });
 
   instance.value = echarts.init(document.getElementById('chartsDOM'))
-  // instance2.value = echarts.init(document.getElementById('chartsDOM2'))
+  instanceRight1.value = echarts.init(document.getElementById('chartsRightDOM1'))
+  instanceRight2.value = echarts.init(document.getElementById('chartsRightDOM2'))
+  instanceRight3.value = echarts.init(document.getElementById('chartsRightDOM3'))
 
   const options = {
     tooltip: {
@@ -122,9 +132,12 @@ function init() {
     visualMap: {
       min: -2000000,
       max: 8000000,
-      left: 'right',
-      top: 'center',
+      orient: 'horizontal',
+      // left: 'right',
+      // top: 'center',
       calculable: true,
+      left: 50,
+      bottom: 50,
       realtime: false,
       splitNumber: 8,
       inRange: {
@@ -143,7 +156,7 @@ function init() {
       // 比例尺文字
       {
         type: 'text', // 类型
-        left: left - 5, // 位置
+        left: OFFSET + left - 5, // 位置
         top: top + height + 5,
         style: {
           text: '0',
@@ -153,7 +166,7 @@ function init() {
       },
       {
         type: 'text', // 类型
-        left: left + width - 10, // 位置
+        left: OFFSET + left + width - 10, // 位置
         top: top + height + 5,
         style: {
           text: '25',
@@ -163,7 +176,7 @@ function init() {
       },
       {
         type: 'text', // 类型
-        left: left + width * 2 - 10, // 位置
+        left: OFFSET + left + width * 2 - 10, // 位置
         top: top + height + 5,
         style: {
           text: '50',
@@ -173,7 +186,7 @@ function init() {
       },
       {
         type: 'text', // 类型
-        left: left + width * 2 + 10, // 位置
+        left: OFFSET + left + width * 2 + 10, // 位置
         top: top,
         style: {
           text: 'Km',
@@ -188,8 +201,8 @@ function init() {
         name: '数据',
         type: 'map',
         mapType: 'water',
-        roam: true,
-        zoom: 1.2,
+        // roam: true,
+        // zoom: 1.2,
         label: {
           normal: {
             show: true // 省份名称
@@ -208,7 +221,7 @@ function init() {
           return {
             type: 'myCustomShape',
             shape: {
-              x: api.value(0),
+              x: OFFSET + api.value(0),
               y: api.value(1),
               width: api.value(2),
               height: api.value(3)
@@ -231,7 +244,7 @@ function init() {
           return {
             type: 'myCustomShape',
             shape: {
-              x: api.value(0),
+              x: OFFSET + api.value(0),
               y: api.value(1),
               width: api.value(2),
               height: api.value(3)
@@ -249,14 +262,65 @@ function init() {
     ]
   }
   instance.value.setOption(options);
+
+  const options2= {
+    title: {
+      text: 'Stacked Line',
+      textStyle: {
+        fontSize: 12,
+      }
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Email', 'Union Ads']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Email',
+        type: 'line',
+        stack: 'Total',
+        data: [120, 132, 101, 134, 90, 230, 210]
+      },
+      {
+        name: 'Union Ads',
+        type: 'line',
+        stack: 'Total',
+        data: [220, 182, 191, 234, 290, 330, 310]
+      },
+    ]
+  };
+  instanceRight1.value.setOption(options2);
+  instanceRight2.value.setOption(options2);
+  instanceRight3.value.setOption(options2);
 }
 
 
 function run() {
   let setId = setInterval(() => {
     count = count + 1;
-    console.log('set ~ ', `${count}/${total}`, setId);
-    const {minValue, maxValue, dataList} = getDataList(count)
+    const {minValue, maxValue, dataList} = props.dataList[count]
+    console.log('set ~ ', `${count}/${total}`, setId, dataList.length, minValue, maxValue);
     instance.value.setOption({
       visualMap: {
         max: maxValue * 1.2,
@@ -267,7 +331,7 @@ function run() {
       }]
     });
 
-    if (count >= total) {
+    if (count >= props.dataList.length - 1) {
       console.log('clear ~ ', setId);
       clearInterval(setId);
     }
@@ -287,8 +351,13 @@ function start() {
 }
 
 onMounted(() => {
-  console.log(`the component is now mounted.`);
+  const ddd = fetchData({
+    waterParams: {}
+  })
+  console.log(`the component is now mounted.`, ddd);
   window.vm = this;
+
+
 
   init();
 
@@ -314,7 +383,10 @@ onMounted(() => {
     </div>
   </div>
   <div class="right">
-
+    <div>数据一</div>
+    <div id="chartsRightDOM1" style="width:150px;height: 200px;"></div>
+    <div id="chartsRightDOM2" style="width:150px;height: 200px;"></div>
+    <div id="chartsRightDOM3" style="width:150px;height: 200px;"></div>
   </div>
 </template>
 

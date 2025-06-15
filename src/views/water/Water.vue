@@ -98,7 +98,7 @@
         </div>
       </div>
       <!-- 中间 -->
-      <chart></chart>
+      <chart :dataList="dataList" xxx="xxx"></chart>
 <!--      <div class="mid">-->
 <!--        <div-->
 <!--        class="large"-->
@@ -176,6 +176,7 @@
   import {getDatasetsByPredictionId} from '@/api/getImages';
   import {resetImageSrc} from "@/utils/ImageSrc";
   import Chart from '@/views/water/Chart.vue'
+  import { fetchData } from '@/utils/dataRequest.js'
 
 
 const showIntro =ref(false);
@@ -224,6 +225,8 @@ const Params2 = reactive({
     waterLimit: [""], // 水量临界数组
   }
 })
+
+const dataList = ref([]); // 用于存储数据列表
 
 // 使用 toRefs 来解构 waterParams
 const { policySubsidyRadio, subsidyScope, subsidyObject, waterGrad, waterPriceStandard, waterLimit, runYear } = toRefs(Params2.waterParams);
@@ -301,6 +304,10 @@ const checkParams= async ()=>{
 
 
   loading.value=true;
+
+  dataList.value = fetchData(finalParams.value);
+  loading.value=false;
+  return;
 
   try{
     const response = await getDatasetsByPredictionId(finalParams.value);
