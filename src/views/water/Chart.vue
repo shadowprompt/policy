@@ -12,40 +12,12 @@ const OFFSET = 50;
 const INITIAL = -1
 let count = INITIAL;
 
-function getDataList(idx) {
-
-  const dataList = Array(76).fill(1).map((item, index) => {
-    const data = waterData[index];
-    const name =data[0];
-
-    const value =data[2 + 10 * idx];
-    // console.log('value of ~ ', idx, index, name, value);
-    return {
-      name: `${index}_${name}`,
-      value,
-      // value: waterData[index] ? waterData[index].value : Math.round(Math.random() * 1000000)
-    };
-  });
-  const maxValue = Math.max(...dataList.map(it => it.value));
-  const minValue = Math.min(...dataList.map(it => it.value));
-  console.log('getDataList of ~ ', idx, dataList, maxValue, minValue);
-  return {
-    maxValue,
-    minValue,
-    dataList,
-  };
-}
-
-const {dataList} = getDataList(0)
-const total =  dataList.length;
-
 let instance = ref(null);
 let instanceRight1 = ref(null);
 let instanceRight2 = ref(null);
 let instanceRight3 = ref(null);
 
 let scale = ref(1);
-
 
 function init() {
   // 比例尺
@@ -82,7 +54,7 @@ function init() {
       geometry: item
     })),
   };
-  console.log('geoJson ~ ', geoJson, dataList);
+  console.log('init eoJson ~ ', geoJson, props.dataList);
   echarts.registerMap('water', {
     geoJSON: geoJson
   });
@@ -320,7 +292,7 @@ function run() {
   let setId = setInterval(() => {
     count = count + 1;
     const {minValue, maxValue, dataList} = props.dataList[count]
-    console.log('set ~ ', `${count}/${total}`, setId, dataList.length, minValue, maxValue);
+    console.log('set ~ ', `${count}/${props.dataList.length}`, setId, dataList.length, minValue, maxValue);
     instance.value.setOption({
       visualMap: {
         max: maxValue * 1.2,
@@ -340,7 +312,7 @@ function run() {
 
 function start() {
   count = INITIAL;
-  console.log('reset ~ ', `${count}/${total}`);
+  console.log('reset ~ to ${count}');
   instance.value.setOption({
     series: [{
       data: []

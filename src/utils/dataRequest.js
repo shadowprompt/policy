@@ -21,6 +21,10 @@ function getYearDataList(list, sceneIndex, yearIndex) {
     maxValue,
     minValue,
     dataList,
+    waterList: [{
+      base: 200000000, // 基准用水量
+      used: 200000000, // 用水量
+    }]
   };
 }
 
