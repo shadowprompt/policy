@@ -7,6 +7,7 @@ import { fetchData } from '@/utils/dataRequest.js'
 
 const props = defineProps(['dataList', 'xxx'])
 console.log('props ~ ', props)
+const CLIENT_WIDTH = 1940;
 
 const OFFSET = 50;
 const INITIAL = 0
@@ -125,8 +126,8 @@ function init() {
       // 比例尺文字
       {
         type: 'text', // 类型
-        left: OFFSET + left - 5, // 位置
-        top: top + height + 5,
+        left: (OFFSET + left - 5) * scale.value, // 位置
+        top: (top + height + 5) * scale.value,
         style: {
           text: '0',
           font: '16px Microsoft YaHei',
@@ -135,28 +136,28 @@ function init() {
       },
       {
         type: 'text', // 类型
-        left: OFFSET + left + width - 10, // 位置
-        top: top + height + 5,
+        left: (OFFSET + left + width - 10) * scale.value, // 位置
+        top: (top + height + 5) * scale.value,
         style: {
-          text: '25',
+          text: '20',
           font: '16px Microsoft YaHei',
           fill: '#333' // 颜色
         }
       },
       {
         type: 'text', // 类型
-        left: OFFSET + left + width * 2 - 10, // 位置
-        top: top + height + 5,
+        left: (OFFSET + left + width * 2 - 10) * scale.value, // 位置
+        top: (top + height + 5) * scale.value,
         style: {
-          text: '50',
+          text: '40',
           font: '16px Microsoft YaHei',
           fill: '#333' // 颜色
         }
       },
       {
         type: 'text', // 类型
-        left: OFFSET + left + width * 2 + 10, // 位置
-        top: top,
+        left: (OFFSET + left + width * 2 + 10) * scale.value, // 位置
+        top: top * scale.value,
         style: {
           text: 'Km',
           font: '16px Microsoft YaHei',
@@ -190,10 +191,10 @@ function init() {
           return {
             type: 'myCustomShape',
             shape: {
-              x: OFFSET + api.value(0),
-              y: api.value(1),
-              width: api.value(2),
-              height: api.value(3)
+              x: (OFFSET + api.value(0)) * scale.value,
+              y: api.value(1) * scale.value,
+              width: api.value(2) * scale.value,
+              height: api.value(3) * scale.value,
             },
             style: {
               fill: '#000000',
@@ -213,10 +214,10 @@ function init() {
           return {
             type: 'myCustomShape',
             shape: {
-              x: OFFSET + api.value(0),
-              y: api.value(1),
-              width: api.value(2),
-              height: api.value(3)
+              x: (OFFSET + api.value(0)) * scale.value,
+              y: api.value(1) * scale.value,
+              width: api.value(2) * scale.value,
+              height: api.value(3) * scale.value,
             },
             style: {
               fill: '#f2f2f2',
@@ -449,7 +450,10 @@ onMounted(() => {
   const ddd = fetchData({
     waterParams: {}
   })
-  console.log(`the component is now mounted.`, ddd);
+  const clientWidth = document.documentElement.clientWidth;
+  scale.value = clientWidth/CLIENT_WIDTH;
+  
+  console.log(`the component is now mounted.`, ddd, clientWidth);
   window.vm = this;
 
 
@@ -459,10 +463,10 @@ onMounted(() => {
   // 动态调整图例大小（例如根据窗口大小）
   window.addEventListener('resize', function() {
     const clientWidth = document.documentElement.clientWidth;
-    scale.value = clientWidth/2543;
+    scale.value = clientWidth/CLIENT_WIDTH;
 
     console.log('clientWidth', clientWidth, scale.value);
-    [mapInstance, instanceRight1, instanceRight2, instanceRight3].forEach(item => {
+    [mapInstance].forEach(item => {
       if (typeof item.value.resize === 'function') {
         item.value.resize();
       }
