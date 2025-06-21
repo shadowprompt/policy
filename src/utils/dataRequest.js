@@ -21,9 +21,16 @@ function getYearDataList(list, sceneIndex, yearIndex) {
     maxValue,
     minValue,
     mapDataList,
-    list1: [4 + parseInt(Math.random() * 10),  2 + parseInt(Math.random() * 10)],
-    list2: [parseInt(Math.random() * 50), parseInt(Math.random() * 50)],
-    list3: [4 + parseInt(Math.random() * 10),  9 + parseInt(Math.random() * 10)],
+    // 剩下的返回全部年限的数据
+    list1:  new Array(totalYear).fill(1).map((item, index) => {
+      return [4 + parseInt(Math.random() * 10),  2 + parseInt(Math.random() * 10)];
+    }),
+    list2:  new Array(totalYear).fill(1).map((item, index) => {
+      return [parseInt(Math.random() * 50), parseInt(Math.random() * 50)];
+    }),
+    list3:  new Array(totalYear).fill(1).map((item, index) => {
+      return [4 + parseInt(Math.random() * 10),  9 + parseInt(Math.random() * 10)];
+    }),
   };
 }
 

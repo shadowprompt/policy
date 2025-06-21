@@ -238,9 +238,7 @@ function init() {
         fontSize: 12,
       }
     },
-    tooltip: {
-      trigger: 'axis',
-    },
+    tooltip: {},
     xAxis: {
       type: 'category',
       axisTick: {
@@ -251,10 +249,13 @@ function init() {
     yAxis: {
       type: 'value'
     },
+    grid: {
+      bottom: '15%',
+    },
     series: [
       {
         type: 'bar',
-        data: [0, 0]
+        data: [1, 1]
       }
     ]
   };
@@ -267,34 +268,28 @@ function init() {
       }
     },
     tooltip: {
-      trigger: 'axis'
+      trigger: 'item'
     },
-    xAxis: {
-      type: 'category',
-    },
-    yAxis: {
-      type: 'value'
+    grid: {
+      bottom: '10%',
     },
     series: [
       {
         type: 'pie',
         id: 'pie',
-        radius: '30%',
-        center: ['50%', '25%'],
-        emphasis: {
-          focus: 'self'
-        },
+        radius: '50%',
         label: {
           formatter: '{b}: ({d}%)'
         },
+        data: [{
+          value: 0,
+          name: '采纳'
+        }, {
+          value: 0,
+          name: '未采纳',
+        }]
       }
     ],
-    dataset: {
-      source: [
-        ['采纳', 0],
-        ['未采纳', 0],
-      ]
-    },
   };
 
   instanceRight3Options.value= {
@@ -304,9 +299,7 @@ function init() {
         fontSize: 12,
       }
     },
-    tooltip: {
-      trigger: 'axis'
-    },
+    tooltip: {},
     xAxis: {
       type: 'category',
       axisTick: {
@@ -316,6 +309,9 @@ function init() {
     },
     yAxis: {
       type: 'value'
+    },
+    grid: {
+      bottom: '15%',
     },
     series: [
       {
@@ -340,7 +336,8 @@ function init() {
 
 
 function run() {
-  console.log('run ~ ', 'dataList=', props.dataList, 'count=', count);
+  const listLength = props.dataList.length;
+  console.log('run ~ ', 'dataList=', props.dataList, 'count=', count, 'listLength=', listLength);
   setId.value = setInterval(() => {
     if (props.dataList.length === 0 || !props.dataList[count]) {
       clearInterval(setId.value);
@@ -349,35 +346,80 @@ function run() {
     const {minValue, maxValue, mapDataList, list1, list2, list3} = props.dataList[count]
     console.log('set ~ ', `${count}/${props.dataList.length}`, setId.value, 'data=', props.dataList[count]);
     mapInstance.value.setOption({
-      visualMap: {
-        max: maxValue * 1.2,
-        min: minValue * 1.4
-      },
+      // visualMap: {
+      //   max: maxValue * 1.2,
+      //   min: minValue * 1.4
+      // },
       series: [{
         data: mapDataList
       }]
     });
 
-    instanceRight1.value.setOption({
-      series: [{
-        data: list1
-      }]
-    });
+    const currentList1 = list1[count];
+    const currentList2 = list2[count];
+    const currentList3 = list3[count];
     
-    instanceRight2.value.setOption({
-      dataset: {
-        source: [
-          ['采纳', list2[0]],
-          ['未采纳', list2[1]],
-        ]
-      }
-    });
+    if (listLength === 1) { // 一年
+      instanceRight1.value.setOption({
+        series: [{
+          data: currentList1
+        }]
+      });
 
-    instanceRight3.value.setOption({
-      series: [{
-        data: list3
-      }]
-    });
+      instanceRight2.value.setOption({
+        series: [{
+          data: [{
+            value: currentList2[0],
+            name: '采纳'
+          }, {
+            value: currentList2[1],
+            name: '未采纳',
+          }]
+        }],
+      });
+
+      instanceRight3.value.setOption({
+        series: [{
+          data: currentList3
+        }]
+      });
+    } else { // 多年 全部用折线图
+      const fullList1_0 = list1.slice(0, count + 1).reduce((acc, item) => {
+        const preTotal = acc[acc.length - 1] || 0;
+        return [...acc, preTotal + item[0]];
+      }, []);
+      const fullList1_1 = list1.slice(0, count + 1).reduce((acc, item) => {
+        const preTotal = acc[acc.length - 1] || 0;
+        return [...acc, preTotal + item[1]];
+      }, []);
+      console.log('fullList1 ~ ', fullList1_0, fullList1_1);
+      const fullList2 = list2.slice(0, count + 1);
+      const fullList3 = list3.slice(0, count + 1);
+
+
+      instanceRight1.value.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+        },
+        series: [{
+          name: '用水量',
+          type: 'line',
+          data: fullList1_0
+        }, {
+          name: '基准用水量',
+          type: 'line',
+          data: fullList1_1
+        }]
+      });
+      
+    }
+    
+    
+
+    
+    
 
     count = count + 1;
 
@@ -434,8 +476,6 @@ defineExpose({start, run})
 
 <template>
   <div class="mid">
-    <button @click="start" :style="{marginLeft: '20px'}">Start</button>
-
     <div class="large" id="chartsDOM"></div>
     <div class="nav">
       <midNav/>
