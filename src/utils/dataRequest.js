@@ -1,4 +1,4 @@
-import waterJson from '../assets/waterJson.json';
+import waterMap from '../assets/waterMap.json';
 import waterData from '../assets/waterData.json';
 
 const data_index_offset = 2;
@@ -7,24 +7,23 @@ const totalYear = 10; // 总运行年限
 function getYearDataList(list, sceneIndex, yearIndex) {
   const offset = sceneIndex * totalYear + 2;
 
-  const dataList = list.map((it, index) => {
+  const mapDataList = list.map((it, index) => {
     return {
       name: `${index}_${it[0]}`,
       value: it[offset + yearIndex],
     }
   })
 
-  const maxValue = Math.max(...dataList.map(it => it.value));
-  const minValue = Math.min(...dataList.map(it => it.value));
+  const maxValue = Math.max(...mapDataList.map(it => it.value));
+  const minValue = Math.min(...mapDataList.map(it => it.value));
 
   return {
     maxValue,
     minValue,
-    dataList,
-    waterList: [{
-      base: 200000000, // 基准用水量
-      used: 200000000, // 用水量
-    }]
+    mapDataList,
+    list1: [4 + parseInt(Math.random() * 10),  2 + parseInt(Math.random() * 10)],
+    list2: [parseInt(Math.random() * 50), parseInt(Math.random() * 50)],
+    list3: [4 + parseInt(Math.random() * 10),  9 + parseInt(Math.random() * 10)],
   };
 }
 

@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, defineExpose } from 'vue';
 import * as echarts from 'echarts';
-import waterJson from '../../assets/waterJson.json';
+import waterMap from '../../assets/waterMap.json';
 import waterData from '../../assets/waterData.json';
 import { fetchData } from '@/utils/dataRequest.js'
 
@@ -9,13 +9,23 @@ const props = defineProps(['dataList', 'xxx'])
 console.log('props ~ ', props)
 
 const OFFSET = 50;
-const INITIAL = -1
+const INITIAL = 0
 let count = INITIAL;
 
-let instance = ref(null);
+let mapInstance = ref(null);
 let instanceRight1 = ref(null);
 let instanceRight2 = ref(null);
 let instanceRight3 = ref(null);
+let instanceRight4 = ref(null);
+
+let mapInstanceOptions = ref(null);
+let instanceRight1Options = ref(null);
+let instanceRight2Options = ref(null);
+let instanceRight3Options = ref(null);
+let instanceRight4Options = ref(null);
+
+let setId = ref(null);
+
 
 let scale = ref(1);
 
@@ -45,7 +55,7 @@ function init() {
 
   const geoJson = {
     "type": "FeatureCollection",
-    "features": waterJson.geometries.slice(0, 69).map((item, index) => ({
+    "features": waterMap.geometries.slice(0, 69).map((item, index) => ({
       "type": "Feature",
       "properties":
         {
@@ -59,31 +69,18 @@ function init() {
     geoJSON: geoJson
   });
 
-  instance.value = echarts.init(document.getElementById('chartsDOM'))
+  mapInstance.value = echarts.init(document.getElementById('chartsDOM'))
   instanceRight1.value = echarts.init(document.getElementById('chartsRightDOM1'))
   instanceRight2.value = echarts.init(document.getElementById('chartsRightDOM2'))
   instanceRight3.value = echarts.init(document.getElementById('chartsRightDOM3'))
+  instanceRight4.value = echarts.init(document.getElementById('chartsRightDOM4'))
 
-  const options = {
+  mapInstanceOptions.value = {
     tooltip: {
       trigger: 'item',
       valueFormatter: (...rest) => {
         // console.log('rest ~ ', rest);
         return rest;
-      }
-    },
-    toolbox: {
-      top: 0,
-      feature: {
-        saveAsImage: {
-          title: '保存图片'
-        },
-        dataZoom: {
-          title: {
-            zoom: '区域缩放',
-            back: '区域缩放还原'
-          }
-        }
       }
     },
     // 左侧小导航图标
@@ -233,11 +230,38 @@ function init() {
       },
     ]
   }
-  instance.value.setOption(options);
 
-  const options2= {
+  instanceRight1Options.value= {
     title: {
-      text: 'Stacked Line',
+      text: '用水量和基准水量',
+      textStyle: {
+        fontSize: 12,
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    xAxis: {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      },
+      data: ['用水量', '基准水量'],
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        type: 'bar',
+        data: [0, 0]
+      }
+    ]
+  };
+
+  instanceRight2Options.value= {
+    title: {
+      text: '技术采纳比例',
       textStyle: {
         fontSize: 12,
       }
@@ -245,75 +269,132 @@ function init() {
     tooltip: {
       trigger: 'axis'
     },
-    legend: {
-      data: ['Email', 'Union Ads']
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
-    },
     xAxis: {
       type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        name: 'Email',
-        type: 'line',
-        stack: 'Total',
-        data: [120, 132, 101, 134, 90, 230, 210]
+        type: 'pie',
+        id: 'pie',
+        radius: '30%',
+        center: ['50%', '25%'],
+        emphasis: {
+          focus: 'self'
+        },
+        label: {
+          formatter: '{b}: ({d}%)'
+        },
+      }
+    ],
+    dataset: {
+      source: [
+        ['采纳', 0],
+        ['未采纳', 0],
+      ]
+    },
+  };
+
+  instanceRight3Options.value= {
+    title: {
+      text: '产值与基准产值',
+      textStyle: {
+        fontSize: 12,
+      }
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    xAxis: {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
       },
+      data: ['产值', '基准产值'],
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
       {
-        name: 'Union Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
+        type: 'bar',
+        data: [{
+          value: 1,
+          itemStyle: {
+            color: '#4682B4'
+          }
+        }, 1]
+      }
     ]
   };
-  instanceRight1.value.setOption(options2);
-  instanceRight2.value.setOption(options2);
-  instanceRight3.value.setOption(options2);
+
+
+  mapInstanceOptions.value && mapInstance.value.setOption(mapInstanceOptions.value);
+  instanceRight1Options.value && instanceRight1.value.setOption(instanceRight1Options.value);
+  instanceRight2Options.value && instanceRight2.value.setOption(instanceRight2Options.value);
+  instanceRight3Options.value && instanceRight3.value.setOption(instanceRight3Options.value);
+  instanceRight4Options.value && instanceRight3.value.setOption(instanceRight4Options.value);
 }
 
 
 function run() {
-  let setId = setInterval(() => {
-    count = count + 1;
-    const {minValue, maxValue, dataList} = props.dataList[count]
-    console.log('set ~ ', `${count}/${props.dataList.length}`, setId, dataList.length, minValue, maxValue);
-    instance.value.setOption({
+  console.log('run ~ ', 'dataList=', props.dataList, 'count=', count);
+  setId.value = setInterval(() => {
+    if (props.dataList.length === 0 || !props.dataList[count]) {
+      clearInterval(setId.value);
+      return;
+    }
+    const {minValue, maxValue, mapDataList, list1, list2, list3} = props.dataList[count]
+    console.log('set ~ ', `${count}/${props.dataList.length}`, setId.value, 'data=', props.dataList[count]);
+    mapInstance.value.setOption({
       visualMap: {
         max: maxValue * 1.2,
         min: minValue * 1.4
       },
       series: [{
-        data: dataList
+        data: mapDataList
       }]
     });
 
+    instanceRight1.value.setOption({
+      series: [{
+        data: list1
+      }]
+    });
+    
+    instanceRight2.value.setOption({
+      dataset: {
+        source: [
+          ['采纳', list2[0]],
+          ['未采纳', list2[1]],
+        ]
+      }
+    });
+
+    instanceRight3.value.setOption({
+      series: [{
+        data: list3
+      }]
+    });
+
+    count = count + 1;
+
     if (count >= props.dataList.length - 1) {
-      console.log('clear ~ ', setId);
-      clearInterval(setId);
+      console.log('clear ~ ', setId.value);
+      clearInterval(setId.value);
     }
   }, 1500);
 }
 
 function start() {
   count = INITIAL;
-  console.log('reset ~ to ${count}');
-  instance.value.setOption({
+  console.log(`reset ~ to ${count}`);
+  clearInterval(setId.value);
+  setId.value = null;
+  
+  mapInstance.value.setOption({
     series: [{
       data: []
     }]
@@ -339,10 +420,16 @@ onMounted(() => {
     scale.value = clientWidth/2543;
 
     console.log('clientWidth', clientWidth, scale.value);
+    [mapInstance, instanceRight1, instanceRight2, instanceRight3].forEach(item => {
+      if (typeof item.value.resize === 'function') {
+        item.value.resize();
+      }
+    })
   });
 
 });
 
+defineExpose({start, run})
 </script>
 
 <template>
@@ -356,9 +443,10 @@ onMounted(() => {
   </div>
   <div class="right">
     <div>数据一</div>
-    <div id="chartsRightDOM1" style="width:150px;height: 200px;"></div>
-    <div id="chartsRightDOM2" style="width:150px;height: 200px;"></div>
-    <div id="chartsRightDOM3" style="width:150px;height: 200px;"></div>
+    <div id="chartsRightDOM1" style="width:100%;height: 300px;"></div>
+    <div id="chartsRightDOM2" style="width:100%;height: 300px;"></div>
+    <div id="chartsRightDOM3" style="width:100%;height: 300px;"></div>
+    <div id="chartsRightDOM4" style="width:100%;height: 300px;"></div>
   </div>
 </template>
 
@@ -385,6 +473,7 @@ onMounted(() => {
   }
 }
 .right{
+  width: 4.53333rem;
   padding: 0px 0px 0px 10px;
   box-sizing: border-box;
   display: flex;

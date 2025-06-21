@@ -98,7 +98,7 @@
         </div>
       </div>
       <!-- 中间 -->
-      <chart :dataList="dataList" xxx="xxx"></chart>
+      <chart :dataList="dataList" ref="chartRef"></chart>
 <!--      <div class="mid">-->
 <!--        <div-->
 <!--        class="large"-->
@@ -179,7 +179,8 @@
   import { fetchData } from '@/utils/dataRequest.js'
 
 
-const showIntro =ref(false);
+  const showIntro =ref(false);
+  const chartRef =ref(null);
 const options = [
 {
     value: '0',
@@ -306,7 +307,10 @@ const checkParams= async ()=>{
   loading.value=true;
 
   dataList.value = fetchData(finalParams.value);
-  loading.value=false;
+  setTimeout(() => {
+    loading.value=false;
+    chartRef.value.start();
+  }, 200)
   return;
 
   try{
