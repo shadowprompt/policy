@@ -30,6 +30,10 @@ let setId = ref(null);
 
 let scale = ref(1);
 
+function getMapGroup (indexList, source) {
+  return indexList.map(item => source[item])
+}
+
 function init() {
   // 比例尺
   const width = 40;
@@ -54,20 +58,83 @@ function init() {
   });
   echarts.graphic.registerShape('myCustomShape', MyShape);
 
+  const listFull = new Array(69).fill(1).map((item, index) => index);
+  const list1 = [56, 24, 61, 0, 43, 57, 51, 52, 5, 50, 27, 13];
+  const list2 = [1, 7, 49, 34, 44, 10, 11, 41, 3, 25, 60, 54, 31, 46, 37, 9];
+  const list3 = [66, 4, 14, 55, 47, 20, 48, 59, 42, 6, 28 , 40];
+  const list4 = [35, 2, 33, 65, 29, 18, 16, 19, 26, 8, 58, 68, 53, 17, 39, 30, 12, 63, 62, 45, 15, 22, 38, 36, 23, 32, 21, 67, 64];
+
+
   const geoJson = {
     "type": "FeatureCollection",
-    "features": waterMap.geometries.slice(0, 69).map((item, index) => ({
+    "features": getMapGroup(listFull, waterMap.geometries).map((item, index) => ({
+      "type": "Feature",
+      "properties":
+          {
+            "name": `${index}_${waterData[index][0]}`,
+          },
+      geometry: item
+    })),
+  };
+  const geoJson1 = {
+    "type": "FeatureCollection",
+    "features": getMapGroup(list1, waterMap.geometries).map((item, index) => ({
       "type": "Feature",
       "properties":
         {
-          "name": `${index}_${waterData[index][0]}`,
+          "name": `${index}`,
         },
       geometry: item
     })),
   };
+  const geoJson2 = {
+    "type": "FeatureCollection",
+    "features": getMapGroup(list2, waterMap.geometries).map((item, index) => ({
+      "type": "Feature",
+      "properties":
+          {
+            "name": `${index}`,
+          },
+      geometry: item
+    })),
+  };
+  const geoJson3 = {
+    "type": "FeatureCollection",
+    "features": getMapGroup(list3, waterMap.geometries).map((item, index) => ({
+      "type": "Feature",
+      "properties":
+          {
+            "name": `${index}`,
+          },
+      geometry: item
+    })),
+  };
+  const geoJson4 = {
+    "type": "FeatureCollection",
+    "features": getMapGroup(list4, waterMap.geometries).map((item, index) => ({
+      "type": "Feature",
+      "properties":
+          {
+            "name": `${index}`,
+          },
+      geometry: item
+    })),
+  };
   console.log('init eoJson ~ ', geoJson, props.dataList);
-  echarts.registerMap('water', {
+  echarts.registerMap('waterMap', {
     geoJSON: geoJson
+  });
+  echarts.registerMap('waterMap1', {
+    geoJSON: geoJson1
+  });
+  echarts.registerMap('waterMap2', {
+    geoJSON: geoJson2
+  });
+  echarts.registerMap('waterMap3', {
+    geoJSON: geoJson3
+  });
+  echarts.registerMap('waterMap4', {
+    geoJSON: geoJson4
   });
 
   mapInstance.value = echarts.init(document.getElementById('chartsDOM'))
@@ -170,7 +237,7 @@ function init() {
       {
         name: '数据',
         type: 'map',
-        mapType: 'water',
+        mapType: 'waterMap',
         // roam: true,
         // zoom: 1.2,
         label: {
@@ -183,6 +250,40 @@ function init() {
         },
         data: [],
       },
+      // {
+      //   name: '数据',
+      //   type: 'map',
+      //   mapType: 'waterMap1',
+      //   // roam: true,
+      //   // zoom: 1.2,
+      //   label: {
+      //     normal: {
+      //       show: true // 省份名称
+      //     },
+      //     emphasis: {
+      //       show: false
+      //     }
+      //   },
+      //   data: [],
+      //   z: 1, zlevel: 1
+      // },
+      // {
+      //   name: '数据',
+      //   type: 'map',
+      //   mapType: 'waterMap2',
+      //   // roam: true,
+      //   // zoom: 1.2=；‘’
+      //   label: {
+      //     normal: {
+      //       show: true // 省份名称
+      //     },
+      //     emphasis: {
+      //       show: false
+      //     }
+      //   },
+      //   data: [],
+      //   z: 2, zlevel: 2
+      // },
       // 比例尺图标
       {
         type: 'custom',
