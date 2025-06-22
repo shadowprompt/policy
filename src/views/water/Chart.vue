@@ -33,6 +33,13 @@ let scale = ref(1);
 function getMapGroup (indexList, source) {
   return indexList.map(item => source[item])
 }
+// 返回累加数组[1, 3, 4] => [1], [1, 4]  [1, 4, 8]
+function calcTotalList (list, itemIndex, count) {
+  return list.slice(0, count + 1).reduce((acc, item) => {
+    const preTotal = acc[acc.length - 1] || 0;
+    return [...acc, preTotal + item[itemIndex]];
+  }, []);
+}
 
 function init() {
   // 比例尺
@@ -448,10 +455,10 @@ function run() {
     const {minValue, maxValue, mapDataList, list1, list2, list3} = props.dataList[count]
     console.log('set ~ ', `${count}/${props.dataList.length}`, setId.value, 'data=', props.dataList[count]);
     mapInstance.value.setOption({
-      // visualMap: {
-      //   max: maxValue * 1.2,
-      //   min: minValue * 1.4
-      // },
+      visualMap: {
+        max: maxValue * 1.2,
+        min: minValue * 1.4
+      },
       series: [{
         data: mapDataList
       }]
@@ -486,18 +493,17 @@ function run() {
         }]
       });
     } else { // 多年 全部用折线图
-      const fullList1_0 = list1.slice(0, count + 1).reduce((acc, item) => {
-        const preTotal = acc[acc.length - 1] || 0;
-        return [...acc, preTotal + item[0]];
-      }, []);
-      const fullList1_1 = list1.slice(0, count + 1).reduce((acc, item) => {
-        const preTotal = acc[acc.length - 1] || 0;
-        return [...acc, preTotal + item[1]];
-      }, []);
-      console.log('fullList1 ~ ', fullList1_0, fullList1_1);
-      const fullList2 = list2.slice(0, count + 1);
-      const fullList3 = list3.slice(0, count + 1);
+      const fullList1_0 = calcTotalList(list1, 0, count);
+      const fullList1_1 = calcTotalList(list1, 1, count);
+      
+      const fullList2_0 = calcTotalList(list2, 0, count);
+      const fullList2_1 = calcTotalList(list2, 1, count);
 
+
+      const fullList3_0 = calcTotalList(list3, 0, count);
+      const fullList3_1 = calcTotalList(list3, 1, count);
+
+      console.log('fullList1 ~ ', fullList1_0, fullList1_1);
 
       instanceRight1.value.setOption({
         xAxis: {
@@ -515,7 +521,43 @@ function run() {
           data: fullList1_1
         }]
       });
-      
+
+      instanceRight2.value.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          name: '采纳',
+          type: 'line',
+          data: fullList2_0
+        }, {
+          name: '未采纳',
+          type: 'line',
+          data: fullList2_1
+        }],
+      });
+
+      instanceRight3.value.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+        },
+        series: [{
+          name: '产值',
+          type: 'line',
+          data: fullList3_0
+        }, {
+          name: '基准产值',
+          type: 'line',
+          data: fullList3_1
+        }]
+      });
     }
     
     
