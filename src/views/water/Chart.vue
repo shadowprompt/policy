@@ -2,8 +2,8 @@
 import { onMounted, ref, defineExpose } from 'vue';
 import * as echarts from 'echarts';
 import waterMap from '../../assets/waterMap.json';
-import waterData from '../../assets/waterData.json';
-import { fetchData } from '@/utils/dataRequest.js'
+import waterData from '../../assets/water_mapData.json'; // 买个地方N年各种场景的数据
+import { fetchData } from '@/utils/waterDataRequest.js'
 
 const props = defineProps(['dataList', 'xxx'])
 console.log('props ~ ', props)
@@ -38,7 +38,7 @@ function calcTotalList (list, itemIndex, count) {
   return list.slice(0, count + 1).reduce((acc, item) => {
     const preTotal = acc[acc.length - 1] || 0;
     return [...acc, preTotal + item[itemIndex]];
-  }, []);
+  }, [0]); // 初始值为2023年的0
 }
 
 function init() {
@@ -78,7 +78,8 @@ function init() {
       "type": "Feature",
       "properties":
           {
-            "name": `${index}_${waterData[index][0]}`,
+            // "name": `${index}_${waterData[index][0]}`,
+            "name": `${waterData[index][0]}`,
           },
       geometry: item
     })),
@@ -151,12 +152,20 @@ function init() {
   instanceRight4.value = echarts.init(document.getElementById('chartsRightDOM4'))
 
   mapInstanceOptions.value = {
+    title: {
+      top: '2%',
+      left: 'center',
+      text: '内蒙古自治区鄂托克前旗玉米灌溉用水量：2023年',
+      textStyle: {
+        fontSize: 24,
+      }
+    },
     tooltip: {
       trigger: 'item',
-      valueFormatter: (...rest) => {
-        // console.log('rest ~ ', rest);
-        return rest;
-      }
+      // valueFormatter: (...rest) => {
+      //   // console.log('rest ~ ', rest);
+      //   return rest;
+      // }
     },
     // 左侧小导航图标
     // visualMap: {
@@ -183,16 +192,19 @@ function init() {
       left: 50,
       bottom: 50,
       realtime: false,
-      splitNumber: 8,
+      splitNumber: 10,
       inRange: {
         color: [
-          '#F2CCD4',
-          '#FFFDFE',
-          '#FFFFFF',
-          '#D7DFEF',
-          '#B2C3E0',
-          '#8FA7D2',
-          '#637CA9'
+          '#F2CDD6',
+          '#E3EEF8',
+          '#EDF1F9',
+          '#E3EEF8',
+          '#CAD7EB',
+          '#B6C7E4',
+          '#AEBBCF',
+          '#88A2D0',
+          '#88A2D0',
+          '#7190C7'
         ]
       }
     },
@@ -342,9 +354,10 @@ function init() {
 
   instanceRight1Options.value= {
     title: {
+      top: '5%',
       text: '用水量和基准水量',
       textStyle: {
-        fontSize: 12,
+        fontSize: 14,
       }
     },
     tooltip: {},
@@ -364,23 +377,24 @@ function init() {
     series: [
       {
         type: 'bar',
-        data: [1, 1]
+        data: [0, 0]
       }
     ]
   };
 
   instanceRight2Options.value= {
     title: {
+      top: '5%',
       text: '技术采纳比例',
       textStyle: {
-        fontSize: 12,
+        fontSize: 14,
       }
     },
     tooltip: {
       trigger: 'item'
     },
     grid: {
-      bottom: '10%',
+      bottom: '5%',
     },
     series: [
       {
@@ -403,9 +417,10 @@ function init() {
 
   instanceRight3Options.value= {
     title: {
+      top: '5%',
       text: '产值与基准产值',
       textStyle: {
-        fontSize: 12,
+        fontSize: 14,
       }
     },
     tooltip: {},
@@ -455,10 +470,13 @@ function run() {
     const {minValue, maxValue, mapDataList, list1, list2, list3} = props.dataList[count]
     console.log('set ~ ', `${count}/${props.dataList.length}`, setId.value, 'data=', props.dataList[count]);
     mapInstance.value.setOption({
-      visualMap: {
-        max: maxValue * 1.2,
-        min: minValue * 1.4
+      title: {
+        text: `内蒙古自治区鄂托克前旗玉米灌溉用水量：${2024 + count}年`,
       },
+      // visualMap: {
+      //   max: maxValue * 1.2,
+      //   min: minValue * 1.4
+      // },
       series: [{
         data: mapDataList
       }]
@@ -468,7 +486,7 @@ function run() {
     const currentList2 = list2[count];
     const currentList3 = list3[count];
     
-    if (listLength === 1) { // 一年
+    if (listLength <= 1) { // 其实只有一年
       instanceRight1.value.setOption({
         series: [{
           data: currentList1
@@ -509,7 +527,7 @@ function run() {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+          data: new Array(listLength + 1).fill(1).map((item, index) => index + 2023)
         },
         series: [{
           name: '用水量',
@@ -526,10 +544,13 @@ function run() {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+          data: new Array(listLength + 1).fill(1).map((item, index) => index + 2023)
         },
         yAxis: {
           type: 'value'
+        },
+        grid: {
+          bottom: '15%',
         },
         series: [{
           name: '采纳',
@@ -546,7 +567,7 @@ function run() {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: new Array(listLength).fill(1).map((item, index) => index + 2023)
+          data: new Array(listLength + 1).fill(1).map((item, index) => index + 2023)
         },
         series: [{
           name: '产值',
@@ -576,6 +597,7 @@ function run() {
 
 function start() {
   count = INITIAL;
+  console.log(`reset ~ to ${count}`);
   console.log(`reset ~ to ${count}`);
   clearInterval(setId.value);
   setId.value = null;
@@ -629,7 +651,6 @@ defineExpose({start, run})
     </div>
   </div>
   <div class="right">
-    <div>数据一</div>
     <div id="chartsRightDOM1" style="width:100%;height: 300px;"></div>
     <div id="chartsRightDOM2" style="width:100%;height: 300px;"></div>
     <div id="chartsRightDOM3" style="width:100%;height: 300px;"></div>
@@ -667,6 +688,7 @@ defineExpose({start, run})
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  margin: 0.48rem 0.25333rem 0.05333rem 0;
   img{
     width: 300px;
     height: 200px;

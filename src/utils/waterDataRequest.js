@@ -1,15 +1,16 @@
-import waterMap from '../assets/waterMap.json';
-import waterData from '../assets/waterData.json';
+import waterData from '../assets/water_mapData.json';
 
 const data_index_offset = 2;
 
 const totalYear = 10; // 总运行年限
+// list里面有历年+各场景的全部数据，需要自行根据索引提取
 function getYearDataList(list, sceneIndex, yearIndex) {
   const offset = sceneIndex * totalYear + 2;
 
   const mapDataList = list.map((it, index) => {
     return {
-      name: `${index}_${it[0]}`,
+      // name: `${index}_${it[0]}`,
+      name: `${it[0]}`,
       value: it[offset + yearIndex],
     }
   })

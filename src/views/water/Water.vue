@@ -176,7 +176,7 @@
   import {getDatasetsByPredictionId} from '@/api/getImages';
   import {resetImageSrc} from "@/utils/ImageSrc";
   import Chart from '@/views/water/Chart.vue'
-  import { fetchData } from '@/utils/dataRequest.js'
+  import { fetchData } from '@/utils/waterDataRequest.js'
 
 
   const showIntro =ref(false);

@@ -108,29 +108,30 @@
         </div>
       </div>
       <!-- 中间 -->
-      <div class="mid">
-        <div 
-        class="large" :class="[imageList.length <=0?'large':'none-large']">
+      <chart :dataList="dataList" ref="chartRef"></chart>
+<!--      <div class="mid">-->
+<!--        <div -->
+<!--        class="large" :class="[imageList.length <=0?'large':'none-large']">-->
 
-          <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"
-          style="object-fit: contain"
-          @click="previewImage(imageList[0])"
-          @load="onImageLoad"
-          :class="[scrollClass]"
-          > 
-        </div>
-        <div class="nav"> <midNav/> </div>
-        
+<!--          <img :src="imageList[0]" alt="主图" v-if="imageList.length > 0"-->
+<!--          style="object-fit: contain"-->
+<!--          @click="previewImage(imageList[0])"-->
+<!--          @load="onImageLoad"-->
+<!--          :class="[scrollClass]"-->
+<!--          > -->
+<!--        </div>-->
+<!--        <div class="nav"> <midNav/> </div>-->
+<!--        -->
 
-        
-        <!-- <img src="" alt=""> -->
-      </div>
-      <div class="right">
-        <img v-for="(image,index) in imageList.slice(1)"
-          :key="index"
-          :src="image" 
-          @click="previewImage(image)">
-      </div>
+<!--        -->
+<!--        &lt;!&ndash; <img src="" alt=""> &ndash;&gt;-->
+<!--      </div>-->
+<!--      <div class="right">-->
+<!--        <img v-for="(image,index) in imageList.slice(1)"-->
+<!--          :key="index"-->
+<!--          :src="image" -->
+<!--          @click="previewImage(image)">-->
+<!--      </div>-->
       <div class="right-title">
         <span class="title">统计分析</span>
       </div>
@@ -700,8 +701,11 @@ import {resetImageSrc} from "@/utils/ImageSrc";
 import {getDatasetsByPredictionId} from '@/api/getImages';
 
 import { ElMessage } from 'element-plus';
-
-
+    import Chart from '@/views/carbon/Chart.vue';
+    import { fetchData } from '@/utils/carbonDataRequest.js';
+    const chartRef =ref(null);
+    const dataList = ref([]); // 用于存储数据列表
+    
   
   // 基本数据
   const modes = [
@@ -800,6 +804,14 @@ const previewImage=(src)=>{
 // 发送请求
   const checkParams= async () => {
   loading.value=true;
+
+  dataList.value = fetchData(finalParams.value);
+  setTimeout(() => {
+    loading.value=false;
+    chartRef.value.start();
+  }, 200)
+  return;
+  
     try {
       const response = await getDatasetsByPredictionId(finalParams.value);
       console.log("请求成功:", response);
