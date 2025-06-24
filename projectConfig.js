@@ -9,6 +9,16 @@ export const configMap = {
       },
     ],
   },
+  carbon:{
+    minify: true,
+    pages: [
+      {
+        filename: 'carbon',
+        entry: 'src/views/carbon/main.js',
+        template: 'index.html',
+      },
+    ],
+  },
   home:{
     minify: true,
     pages: [

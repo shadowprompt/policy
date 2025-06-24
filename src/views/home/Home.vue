@@ -12,17 +12,17 @@
       <img src="../../assets/home/中心元素.png" alt="地球图标">
 
       <div class="mid-image">
-        <div class="mid-image1 img1"><router-link class="btn" to="/carbon"> <p>减排固碳政策</p> 
+        <div class="mid-image1 img1"><a class="btn" href="//carbon.bundless.cn"> <p>减排固碳政策</p> 
               <img src="../../assets/home/底座.png" alt="底座">
-            </router-link></div>
-            <div class="mid-image1"><router-link class="btn" to="/water"><p>水价改革政策</p>
-              <img src="../../assets/home/底座.png" alt="底座">
-            
-            </router-link></div>
-            <div class="mid-image1"><router-link class="btn" to="/yields"><p>大数据作物估产</p>
+            </a></div>
+            <div class="mid-image1"><a class="btn" href="//water.bundless.cn"><p>水价改革政策</p>
               <img src="../../assets/home/底座.png" alt="底座">
             
-            </router-link></div>
+            </a></div>
+            <div class="mid-image1"><a class="btn" href="//yields.bundless.cn"><p>大数据作物估产</p>
+              <img src="../../assets/home/底座.png" alt="底座">
+            
+            </a></div>
       </div>
     </div>
     <!-- 底部文字 -->

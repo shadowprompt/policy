@@ -21,9 +21,9 @@ const router = useRouter();
 const route = useRoute();
 
 const buttons = [
-  { label: '减排固碳政策', route: '/carbon' },
-  { label: '水价改革政策', route: '/water' },
-  { label: '大数据作物估产', route: '/yields' }
+  { label: '减排固碳政策', route: '//carbon.bundless.cn' },
+  { label: '水价改革政策', route: '//water.bundless.cn' },
+  { label: '大数据作物估产', route: '//yields.bundless.cn' }
 ];
 
 const currentRoute = computed(() => route.path);
@@ -40,7 +40,7 @@ const orderedButtons = computed(() => {
 });
 
 const navigateTo = (path) => {
-  router.push(path);
+  location.href = path
 };
 </script>
 
